@@ -1,0 +1,179 @@
+## 20.3.5 Question 1
+## is.finite(x) and !is.infinite(x). The first one views NA and NaN as False where as !is.infinite(x) views NAs as True
+x <- c(2,NA,NaN,4)
+is.finite(x)
+!is.infinite(x)
+
+## Question 2
+##dplyr near is used to see if two vectors of floating numbers are equal because it has a tolerance built in that == doesnt
+
+## Question 3
+## Note that current implementations of R use 32-bit integers for integer vectors, so the range of representable integers is restricted to about +/-2*10^9: 
+##doubles can hold much larger integers exactly.
+
+##20.4.6 Question 1
+## mean(is.na(x)) calculats the proporiton of missing values
+## sum(!is.finite(X)) calculates the numbers of values missing in a vector 
+
+## Question 2
+## is.vector returns true if its a vector of the specified mode
+## is.atomic specifically checks to see if its "logical" "integer" or "numeric"
+
+## Question 3
+## setNames() uses one vector to apply names to another whereas set_names does the same or with an unamed set of arguments
+
+## Question 4
+last_value <- function(x) {
+  if (length(x)) {
+    x[[length(x)]]  
+  } else {
+    x
+  }
+}
+last_value(1:10)
+## use two [[
+
+even_indices <- function(x) {
+  if (length(x)) {
+    x[seq_along(x) %% 2 == 0]
+  } else {
+    x
+  }  
+}
+even_indices(letters)
+not_last <- function(x) {
+  n <- length(x)
+  if (n) {
+    x[-n]
+  } else {
+    # n == 0
+    x
+  }
+}
+not_last(1:5)
+
+even_numbers <- function(x) {
+  x[x %% 2 == 0]
+}
+even_numbers(0:4)
+
+## Question 5
+## the difference between the two is how they handle the NaN value
+x <- NaN
+x[-which(x>0)]
+x[x<=0]
+
+## Question 6
+x <- c(1,2)
+x[3]
+## Subsetting with a larger value results in a NA Value same result when subsetting a name that doesnt exist
+
+## 20.5.4 Question 1
+## not quite sure how to draw this in R but the long list of lists would look like a bunch of embedded boxes with a at the center
+## the first one would have a box with a and b as separate boxes followed by a box of c,d and box of e,f all in one larger box
+
+## Question 2
+## similar to a list but a tibble must have columns all with the same number of rows 
+x <- tibble(c = 1:4, d = 5:8)
+x[1]
+x[1, ]
+
+## 21.2.1 Question 1 
+loop <- vector("double",ncol(mtcars))
+names(loop) <- names(mtcars)
+for(i in names(mtcars)){loop[i] <- mean(mtcars[[i]])}
+loop
+
+library(nycflights13)
+loop <- vector("list",ncol(flights))
+names(loop) <-names(flights)
+for (i in names(flights)) {loop[i] <- class(flights[[i]])}
+loop
+## Question 2
+# a stringr::str_c(letters, collapse = "")
+# b use sd(x)
+# c use cumsum
+
+## Question 3
+song <-
+  "Alice the camel has five humps.
+Alice the camel has five humps.
+Alice the camel has five humps.
+So go, Alice, go.
+"
+split_song <- str_split(song, "\\.")[[1]]
+for (i in split_song) {
+  cat(i)
+}
+
+nurs <- function(x) {
+  
+  empty_list <- vector("list", x)
+  empty_list[[1]] <- '\n There was 1 in the bed \n And the little one said, "Alone at last!"'
+  
+  for (i in seq_len(x)[-1]) {
+    the_str <-
+      paste0('\n There were ', i,' in the bed \n And the little one said, \n "Roll over! Roll over!" \n So they all rolled over and one fell out \n')
+    
+    empty_list[[i]] <- the_str
+  }
+  
+  for (i in rev(empty_list)) cat(i, sep = "\n")
+}
+nurs(10)
+
+beer_bottles <- function(x) {for(i in seq(n,1)) {cat(str_c(beer_bottles(x),"of beer on the wall,", x, "of beer.\n"))
+cat(str_c("take one down and pass it around, ", beer_bottles(x-1), "of beer on the wall.\n\n"))}}
+
+## Question 4
+## The first vector will be a lot slower than the second vector 
+
+
+non_allocate = {
+  output <- vector("integer", 0)
+  for (i in seq_along(x)) {
+    output <- c(output, length(x[[i]]))
+  }
+}
+
+allocate = {
+  output <- vector("integer", 0)
+  for (i in seq_along(x)) {
+    output[i] <- length(x[[i]])
+  }
+  output <- vector("integer", 0)
+  for (i in seq_along(x)) {
+    output <- c(output, lengths(x[[i]]))
+  }
+  output
+  
+## 21.3.5 Question 1
+  csv <- c("csv1", "csv2")
+  dfs <- vector("list", length(csv))
+  for (i in csv) {
+    dfs[[i]] <- read_csv(csv[[i]])
+  }
+  
+## Question 2
+  no_names <- 1:4
+  some_names <- c("one" = 1, 2, "three" = 3)
+  not_unique <- c("one" = 1, "one" = 2, "three" = 3)
+## no_names nothing happens
+## Not_unique everything gets displayed, some the non name gets ""
+
+
+## Question 3 
+show_mean <- function(df, digits = 2) {
+maxstr <- max(str_length(names(df)))
+for (nm in names(df)) {
+if (is.numeric(df[[nm]])) {
+cat(str_c(str_pad(str_c(nm, ":"), maxstr + 1L, side = "right"),        format(mean(df[[nm]]), digits = digits, nsmall = digits),         sep = " "), "\n")  } } }
+show_mean(iris)
+
+## 21.5.3 Question 1
+map_dbl(mtcars,mean)
+map(flights,class)
+map(iris, ~length(unique(.)))
+map(c(-10,0,10,100),rnorm, n = 10)
+
+  
